@@ -1,8 +1,5 @@
-type Factor = (Coeficient, Literal, Degree)
-type Pol = [Factor]
+type Factor = (Coeficient, [LiteralDegree])
 type Coeficient = Int
-type Literal = Char
-type Degree = Int
+type LiteralDegree = (Char,Int)
 
----filterZeros
---[()]
+type Poli = [Factor]
