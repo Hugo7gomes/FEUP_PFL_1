@@ -26,7 +26,7 @@ sortFactor fac1 fac2 |  degree1 <= degree2 = LT
                            degree2 = snd ( head (snd fac2))
 
 sortPoli :: [Factor] -> [Factor]
-sortPoli l = reverse(sortBy sortFactor [(fst x, sortLiteral(snd x)) | x <- l, x /= 0])
+sortPoli l = reverse(sortBy sortFactor [(fst x, sortLiteral(snd x)) | x <- l, fst x /= 0])
 
 
 normalize :: Poli -> Poli
@@ -40,3 +40,22 @@ addFactor l1 l2 = if length l3  > 1
                   then [(sum[fst x | x <- l2, snd(head l1) == snd x] + fst(head l1) , snd(head l2))] ++ [head l3]
                   else [(sum[fst x | x <- l2, snd(head l1) == snd x] + fst(head l1) , snd(head l2))] ++ []
                   where l3 = [y | y <-l2, snd(head l2) /= snd y]
+
+
+addTwoPolis :: Poli -> Poli -> Poli
+addTwoPolis pol1 pol2 = normalize (pol1 ++ pol2)
+
+
+multiplicatePolis :: Poli -> Poli -> Poli
+multiplicatePolis pol1 pol2 = [((fst x) * (fst y), (snd x) ++ (snd y)) | x <- pol3, y <- pol4]
+                  where pol3 = normalize pol1
+                        pol4 = normalize pol2
+{-
+derivateFactor :: Factor -> Char -> Factor
+derivateFactor fac1 var =
+derivateFactor
+
+derivatePoli :: Poli -> Char -> Poli
+derivatePoli pol1 var = normalize [derivateFactor x var | x <- pol2]
+                          where pol2 = normalize pol1
+                          -}
