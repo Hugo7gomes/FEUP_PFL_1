@@ -26,7 +26,7 @@ sortFactor fac1 fac2 |  degree1 <= degree2 = LT
                            degree2 = snd ( head (snd fac2))
 
 sortPoli :: [Factor] -> [Factor]
-sortPoli l = reverse(sortBy sortFactor [(fst x, sortLiteral(snd x)) | x <- l])
+sortPoli l = reverse(sortBy sortFactor [(fst x, sortLiteral(snd x)) | x <- l, x /= 0])
 
 
 normalize :: Poli -> Poli
