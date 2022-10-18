@@ -14,10 +14,15 @@ sortLitAlg lit1 lit2 | snd lit1 < snd lit2 = LT
                      | ((snd lit1 == snd lit2) &&  (fst lit1 < fst lit2)) = LT
                      | ((snd lit1 == snd lit2) &&  (fst lit1 >= fst lit2)) = GT
 
+addExpo :: [(Char,Int)] -> [(Char,Int)]
+addExpo (x:xs) = [(fst x, sum ([snd y | y <- xs, (fst x) == (fst y)] ++ [snd x]))] ++ addExpo [z | z <- xs, (fst x) /= (fst z)]
+addExpo [] = []
+
 
 
 sortLiteral :: [(Char,Int)] -> [(Char,Int)]
-sortLiteral l = reverse (sortBy sortLitAlg l)
+sortLiteral l = reverse (sortBy sortLitAlg expoAdded)
+                where expoAdded = addExpo l
 
 sortFactor :: Factor -> Factor -> Ordering
 sortFactor fac1 fac2 |  degree1 <= degree2 = LT
@@ -47,7 +52,7 @@ addTwoPolis pol1 pol2 = normalize (pol1 ++ pol2)
 
 
 multiplicatePolis :: Poli -> Poli -> Poli
-multiplicatePolis pol1 pol2 = [((fst x) * (fst y), (snd x) ++ (snd y)) | x <- pol3, y <- pol4]
+multiplicatePolis pol1 pol2 = normalize [((fst x) * (fst y), (snd x) ++ (snd y)) | x <- pol3, y <- pol4]
                   where pol3 = normalize pol1
                         pol4 = normalize pol2
 {-
