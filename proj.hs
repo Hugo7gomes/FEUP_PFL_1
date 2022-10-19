@@ -3,10 +3,9 @@ import Data.Ord
 import System.IO
 
 type Factor = (Int, [(Char,Int)])
---type Coeficient = Int
---type LiteralDegree = (Char,Int)
-
 type Poli = [Factor]
+
+
 
 sortLitAlg :: (Char,Int) -> (Char,Int) -> Ordering
 sortLitAlg lit1 lit2 | snd lit1 < snd lit2 = LT
@@ -35,32 +34,59 @@ sortPoli l = reverse(sortBy sortFactor [(fst x, sortLiteral(snd x)) | x <- l, fs
 
 
 normalize :: Poli -> Poli
-normalize polinom = addFactor [head l1] (tail l1)
+normalize polinom = addFactor l1
                     where l1 = sortPoli polinom
 
-addFactor :: [Factor] -> [Factor] -> [Factor]
-addFactor l1 l2 = if length l3  > 1
-                  then [(sum[fst x | x <- l2, snd(head l1) == snd x] + fst(head l1) , snd(head l2))] ++ addFactor [head l3] (tail l3)
-                  else if ((0 < length l3) && (length l3 < 2))
-                  then [(sum[fst x | x <- l2, snd(head l1) == snd x] + fst(head l1) , snd(head l2))] ++ [head l3]
-                  else [(sum[fst x | x <- l2, snd(head l1) == snd x] + fst(head l1) , snd(head l2))] ++ []
-                  where l3 = [y | y <-l2, snd(head l2) /= snd y]
+addFactor :: [Factor] -> [Factor]
+addFactor (x:xs) = [(sum([fst y | y <- xs, (snd x) == (snd y)] ++ [fst x]) ,snd x)] ++ addFactor [z | z <- xs, (snd x) /= (snd z)]
+addFactor [] = []
+
+
+
+
 
 
 addTwoPolis :: Poli -> Poli -> Poli
 addTwoPolis pol1 pol2 = normalize (pol1 ++ pol2)
 
 
+
+
+
 multiplicatePolis :: Poli -> Poli -> Poli
 multiplicatePolis pol1 pol2 = normalize [((fst x) * (fst y), (snd x) ++ (snd y)) | x <- pol3, y <- pol4]
                   where pol3 = normalize pol1
                         pol4 = normalize pol2
-{-
-derivateFactor :: Factor -> Char -> Factor
-derivateFactor fac1 var =
-derivateFactor
+
+
+
+
+
+
+multiplicateCoef :: Poli -> Char -> Poli
+multiplicateCoef (x:xs) var = [(product([fst x] ++ [snd y | y <- (snd x), (fst y) == var]), snd x)] ++ multiplicateCoef xs var
+multiplicateCoef [] var = []
+
+
+reduceDegree :: Factor -> Char -> Factor
+reduceDegree fac1 var = (fst fac1, [(fst x, snd x - 1) | x <- snd fac1, (fst x) == var] ++ [x | x <- snd fac1, (fst x) /= var])
+
+eliminate0Degree :: Factor -> Factor
+eliminate0Degree fac1 = (fst fac1, [(' ', 0) | x <- snd fac1, (snd x) == 0] ++ [x | x<- snd fac1, (snd x) /= 0])
+
+sortByVar :: (Char,Int) -> Char -> Ordering
+sortByVar lit1 var |(fst lit1 == var) = GT
+                   |(fst lit1 /= var) = LT
+
+
+eliminateTerms :: Factor -> Char -> Bool
+eliminateTerms x var = foldr (||) False [var == (fst y)| y <- (snd x)]
+
+
 
 derivatePoli :: Poli -> Char -> Poli
-derivatePoli pol1 var = normalize [derivateFactor x var | x <- pol2]
-                          where pol2 = normalize pol1
-                          -}
+derivatePoli pol1 var = normalize [eliminate0Degree x | x <- pol5]
+                        where pol5 = [x | x <- pol4, eliminateTerms x var]
+                              pol4 = normalize [reduceDegree x var | x <- pol3]
+                              pol3 = multiplicateCoef pol2 var
+                              pol2 = normalize pol1
