@@ -7,12 +7,14 @@ import Data.String
 type Factor = (Int, [(Char,Int)])
 type Poli = [Factor]
 
+
+
 splitString :: String -> [String]
 splitString poly | (take 1 poly) == "-" = [take 1 poly] ++ splitString (drop 1 poly)
                  | otherwise = case dropWhile (\x -> x == '+' || x == '-') poly of
-                      "" -> []
-                      s' -> w : words s''
-                            where (w, s'') = break (\x -> x == '+' || x == '-') s'
+                                    "" -> []
+                                    s' -> w : words s''
+                                        where (w, s'') = break (\x -> x == '+' || x == '-') s'
 
 
 removeSpaces :: [String] -> [String]
@@ -23,6 +25,7 @@ createMonomyal :: [String] -> [String]
 createMonomyal (x:xs:xss) |x == "-" = [x ++ xs] ++ createMonomyal xss
                           |x == "+" = [xs] ++ createMonomyal xss
                           |otherwise = [x] ++ createMonomyal ([xs] ++ xss)
+createMonomyal (x:[]) = [x]
 createMonomyal [] = []
 
 
@@ -39,10 +42,10 @@ takeCoef (x:xs)
               else (-1, createLiteral xs)
 
 
-
 createPoly :: String -> Poli
-createPoly x = [takeCoef mono | mono <- monomyal, mono /= ""]
-            where monomyal = createMonomyal strings
+createPoly x = poly {-[(fst z, [(' ', 0)]) | z <- poly, (snd z) == []] ++ [z | z <- poly, (snd z) /= []]-}
+            where poly = [takeCoef mono | mono <- monomyal, mono /= ""]
+                  monomyal = createMonomyal strings
                   strings = removeSpaces s
                   s = splitString x
 
@@ -112,17 +115,13 @@ multiplicateCoef [] var = []
 reduceDegree :: Factor -> Char -> Factor
 reduceDegree fac1 var = (fst fac1, [(fst x, snd x - 1) | x <- snd fac1, (fst x) == var] ++ [x | x <- snd fac1, (fst x) /= var])
 
+
 eliminate0Degree :: Factor -> Factor
 eliminate0Degree fac1 = (fst fac1, [(' ', 0) | x <- snd fac1, (snd x) == 0] ++ [x | x<- snd fac1, (snd x) /= 0])
-
-sortByVar :: (Char,Int) -> Char -> Ordering
-sortByVar lit1 var |(fst lit1 == var) = GT
-                   |(fst lit1 /= var) = LT
 
 
 eliminateTerms :: Factor -> Char -> Bool
 eliminateTerms x var = foldr (||) False [var == (fst y)| y <- (snd x)]
-
 
 
 derivatePoli :: Poli -> Char -> Poli
