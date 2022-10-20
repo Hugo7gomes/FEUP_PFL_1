@@ -43,7 +43,7 @@ takeCoef (x:xs)
 
 
 createPoly :: String -> Poli
-createPoly x = poly {-[(fst z, [(' ', 0)]) | z <- poly, (snd z) == []] ++ [z | z <- poly, (snd z) /= []]-}
+createPoly x = [(fst z, [(' ', 0)]) | z <- poly, (snd z) == []] ++ [z | z <- poly, (snd z) /= []]
             where poly = [takeCoef mono | mono <- monomyal, mono /= ""]
                   monomyal = createMonomyal strings
                   strings = removeSpaces s
