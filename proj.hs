@@ -13,8 +13,8 @@ splitString :: String -> [String]
 splitString poly | (take 1 poly) == "-" = [take 1 poly] ++ splitString (drop 1 poly)
                  | otherwise = case dropWhile (\x -> x == '+' || x == '-') poly of
                                     "" -> []
-                                    s' -> w : words s''
-                                        where (w, s'') = break (\x -> x == '+' || x == '-') s'
+                                    s' -> w : splitString s''
+                                        where (w, s'') = break (\x -> x =='+' || x =='-') s'
 
 
 removeSpaces :: [String] -> [String]
