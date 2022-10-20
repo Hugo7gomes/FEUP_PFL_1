@@ -1,9 +1,50 @@
 import Data.List
 import Data.Ord
+import Data.Char
 import System.IO
+import Data.String
 
 type Factor = (Int, [(Char,Int)])
 type Poli = [Factor]
+
+splitString :: String -> [String]
+splitString poly | (take 1 poly) == "-" = [take 1 poly] ++ splitString (drop 1 poly)
+                 | otherwise = case dropWhile (\x -> x == '+' || x == '-') poly of
+                      "" -> []
+                      s' -> w : words s''
+                            where (w, s'') = break (\x -> x == '+' || x == '-') s'
+
+
+removeSpaces :: [String] -> [String]
+removeSpaces x = [filter (\xs -> (xs /=' ')) y | y <- x]
+
+
+createMonomyal :: [String] -> [String]
+createMonomyal (x:xs:xss) |x == "-" = [x ++ xs] ++ createMonomyal xss
+                          |x == "+" = [xs] ++ createMonomyal xss
+                          |otherwise = [x] ++ createMonomyal ([xs] ++ xss)
+createMonomyal [] = []
+
+
+createLiteral :: String -> [(Char, Int)]
+createLiteral (x:xs:xss) | isLetter xs = [(x, 1)] ++ createLiteral ([xs] ++ xss)
+                         | xs == '^' = [(x, read (takeWhile (isDigit) xss) :: Int)] ++ createLiteral (dropWhile (isDigit) xss)
+createLiteral (x:[]) = [(x, 1)]
+createLiteral [] = []
+
+takeCoef :: String -> Factor
+takeCoef (x:xs)
+  | isDigit x = ((read ([x] ++ (takeWhile (isDigit) xs)) :: Int), createLiteral (dropWhile (isDigit) xs))
+  | x == '-' = if isDigit (head xs) then ((read ([x] ++ (takeWhile (isDigit) xs)) :: Int), createLiteral (dropWhile (isDigit) xs))
+              else (-1, createLiteral xs)
+
+
+
+createPoly :: String -> Poli
+createPoly x = [takeCoef mono | mono <- monomyal]
+            where monomyal = createMonomyal strings
+                  strings = removeSpaces s
+                  s = splitString x
 
 
 
