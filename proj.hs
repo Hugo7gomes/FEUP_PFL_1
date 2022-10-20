@@ -41,7 +41,7 @@ takeCoef (x:xs)
 
 
 createPoly :: String -> Poli
-createPoly x = [takeCoef mono | mono <- monomyal]
+createPoly x = [takeCoef mono | mono <- monomyal, mono /= ""]
             where monomyal = createMonomyal strings
                   strings = removeSpaces s
                   s = splitString x
