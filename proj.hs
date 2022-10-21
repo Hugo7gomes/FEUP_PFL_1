@@ -1,12 +1,15 @@
+module Proj where
+
 import Data.List
 import Data.Ord
 import Data.Char
 import System.IO
 import Data.String
 
+
+
 type Factor = (Int, [(Char,Int)])
 type Poli = [Factor]
-
 
 
 splitString :: String -> [String]
@@ -35,6 +38,8 @@ createLiteral (x:xs:xss) | isLetter xs = [(x, 1)] ++ createLiteral ([xs] ++ xss)
 createLiteral (x:[]) = [(x, 1)]
 createLiteral [] = []
 
+
+
 takeCoef :: String -> Factor
 takeCoef (x:xs)
   | isDigit x = ((read ([x] ++ (takeWhile (isDigit) xs)) :: Int), createLiteral (dropWhile (isDigit) xs))
@@ -48,6 +53,11 @@ createPoly x = [(fst z, [(' ', 0)]) | z <- poly, (snd z) == []] ++ [z | z <- pol
                   monomyal = createMonomyal strings
                   strings = removeSpaces s
                   s = splitString x
+
+
+
+
+
 
 
 
@@ -130,3 +140,23 @@ derivatePoli pol1 var = normalize [eliminate0Degree x | x <- pol5]
                               pol4 = normalize [reduceDegree x var | x <- pol3]
                               pol3 = multiplicateCoef pol2 var
                               pol2 = normalize pol1
+
+showLiteral :: [(Char,Int)] -> String
+showLiteral (x:xs) | (fst x) == ' ' = ""
+                   | (snd x) == 1 = [fst x] ++ showLiteral xs
+                   | otherwise = [fst x] ++ "^" ++ show (snd x) ++ showLiteral xs
+showLiteral [] = []
+
+
+
+
+createString :: Poli -> String
+createString (x:xs) |(fst x) > 0 = "+" ++ show (fst x) ++ showLiteral (snd x) ++ createString xs
+                    |otherwise = show (fst x) ++ showLiteral (snd x) ++ createString xs
+createString [] = ""
+
+
+outputString :: Poli -> String
+outputString pol1 | (head pol2) == '+' = drop 1 pol2
+                  | otherwise = pol2
+                  where pol2 = createString pol1
