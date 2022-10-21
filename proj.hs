@@ -45,6 +45,7 @@ takeCoef (x:xs)
   | isDigit x = ((read ([x] ++ (takeWhile (isDigit) xs)) :: Int), createLiteral (dropWhile (isDigit) xs))
   | x == '-' = if isDigit (head xs) then ((read ([x] ++ (takeWhile (isDigit) xs)) :: Int), createLiteral (dropWhile (isDigit) xs))
               else (-1, createLiteral xs)
+  | isLetter x = (1, createLiteral ([x] ++ xs))
 
 
 createPoly :: String -> Poli
@@ -140,6 +141,9 @@ derivatePoli pol1 var = normalize [eliminate0Degree x | x <- pol5]
                               pol4 = normalize [reduceDegree x var | x <- pol3]
                               pol3 = multiplicateCoef pol2 var
                               pol2 = normalize pol1
+
+
+
 
 showLiteral :: [(Char,Int)] -> String
 showLiteral (x:xs) | (fst x) == ' ' = ""
