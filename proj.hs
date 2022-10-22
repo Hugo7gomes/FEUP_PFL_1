@@ -65,8 +65,8 @@ createPoly x = [(fst z, [(' ', 0)]) | z <- poly, (snd z) == []] ++ [z | z <- pol
 sortLitAlg :: (Char,Int) -> (Char,Int) -> Ordering
 sortLitAlg lit1 lit2 | snd lit1 < snd lit2 = LT
                      | snd lit1 > snd lit2 = GT
-                     | ((snd lit1 == snd lit2) &&  (fst lit1 < fst lit2)) = LT
-                     | ((snd lit1 == snd lit2) &&  (fst lit1 >= fst lit2)) = GT
+                     | ((snd lit1 == snd lit2) &&  (fst lit1 < fst lit2)) = GT
+                     | ((snd lit1 == snd lit2) &&  (fst lit1 >= fst lit2)) = LT
 
 addExpo :: [(Char,Int)] -> [(Char,Int)]
 addExpo (x:xs) = [(fst x, sum ([snd y | y <- xs, (fst x) == (fst y)] ++ [snd x]))] ++ addExpo [z | z <- xs, (fst x) /= (fst z)]
@@ -98,8 +98,8 @@ normalize polinom = addFactor l1
                     where l1 = sortPoli polinom
 
 
-normalizeString :: String -> Poli
-normalizeString spoli = normalize (createPoly spoli)
+normalizeString :: String -> String
+normalizeString spoli =  outputString (normalize (createPoly spoli))
 
 
 
@@ -107,8 +107,8 @@ normalizeString spoli = normalize (createPoly spoli)
 addTwoPolis :: Poli -> Poli -> Poli
 addTwoPolis pol1 pol2 = normalize (pol1 ++ pol2)
 
-addTwoPolisString :: String -> String -> Poli
-addTwoPolisString pol1 pol2 = addTwoPolis (createPoly pol1) (createPoly pol2)
+addTwoPolisString :: String -> String -> String
+addTwoPolisString pol1 pol2 = outputString (addTwoPolis (createPoly pol1) (createPoly pol2))
 
 
 
@@ -119,8 +119,8 @@ multiplicatePolis pol1 pol2 = normalize [((fst x) * (fst y), (snd x) ++ (snd y))
 
 
 
-multiplicatePolisString :: String -> String -> Poli
-multiplicatePolisString pol1 pol2 = multiplicatePolis (createPoly pol1) (createPoly pol2)
+multiplicatePolisString :: String -> String -> String
+multiplicatePolisString pol1 pol2 = outputString (multiplicatePolis (createPoly pol1) (createPoly pol2))
 
 
 
@@ -150,8 +150,8 @@ derivatePoli pol1 var = normalize [eliminate0Degree x | x <- pol5]
                               pol2 = normalize pol1
 
 
-derivatePoliString :: String -> Char -> Poli
-derivatePoliString pol1 var = derivatePoli (createPoly pol1) var
+derivatePoliString :: String -> Char -> String
+derivatePoliString pol1 var = outputString (derivatePoli (createPoly pol1) var)
 
 
 
