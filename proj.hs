@@ -88,15 +88,18 @@ sortPoli :: [Factor] -> [Factor]
 sortPoli l = reverse(sortBy sortFactor [(fst x, sortLiteral(snd x)) | x <- l, fst x /= 0])
 
 
-normalize :: Poli -> Poli
-normalize polinom = addFactor l1
-                    where l1 = sortPoli polinom
-
 addFactor :: [Factor] -> [Factor]
 addFactor (x:xs) = [(sum([fst y | y <- xs, (snd x) == (snd y)] ++ [fst x]) ,snd x)] ++ addFactor [z | z <- xs, (snd x) /= (snd z)]
 addFactor [] = []
 
 
+normalize :: Poli -> Poli
+normalize polinom = addFactor l1
+                    where l1 = sortPoli polinom
+
+
+normalizeString :: String -> Poli
+normalizeString spoli = normalize (createPoly spoli)
 
 
 
@@ -104,7 +107,8 @@ addFactor [] = []
 addTwoPolis :: Poli -> Poli -> Poli
 addTwoPolis pol1 pol2 = normalize (pol1 ++ pol2)
 
-
+addTwoPolisString :: String -> String -> Poli
+addTwoPolisString pol1 pol2 = addTwoPolis (createPoly pol1) (createPoly pol2)
 
 
 
@@ -114,6 +118,9 @@ multiplicatePolis pol1 pol2 = normalize [((fst x) * (fst y), (snd x) ++ (snd y))
                         pol4 = normalize pol2
 
 
+
+multiplicatePolisString :: String -> String -> Poli
+multiplicatePolisString pol1 pol2 = multiplicatePolis (createPoly pol1) (createPoly pol2)
 
 
 
@@ -128,7 +135,7 @@ reduceDegree fac1 var = (fst fac1, [(fst x, snd x - 1) | x <- snd fac1, (fst x) 
 
 
 eliminate0Degree :: Factor -> Factor
-eliminate0Degree fac1 = (fst fac1, [(' ', 0) | x <- snd fac1, (snd x) == 0] ++ [x | x<- snd fac1, (snd x) /= 0])
+eliminate0Degree fac1 = (fst fac1, [(' ', 0) | x <- snd fac1, ((snd x) == 0) && length(snd fac1) == 1] ++ [x | x<- snd fac1, (snd x) /= 0])
 
 
 eliminateTerms :: Factor -> Char -> Bool
@@ -141,6 +148,10 @@ derivatePoli pol1 var = normalize [eliminate0Degree x | x <- pol5]
                               pol4 = normalize [reduceDegree x var | x <- pol3]
                               pol3 = multiplicateCoef pol2 var
                               pol2 = normalize pol1
+
+
+derivatePoliString :: String -> Char -> Poli
+derivatePoliString pol1 var = derivatePoli (createPoly pol1) var
 
 
 
