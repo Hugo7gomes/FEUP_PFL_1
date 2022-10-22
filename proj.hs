@@ -58,10 +58,6 @@ createPoly x = [(fst z, [(' ', 0)]) | z <- poly, (snd z) == []] ++ [z | z <- pol
 
 
 
-
-
-
-
 sortLitAlg :: (Char,Int) -> (Char,Int) -> Ordering
 sortLitAlg lit1 lit2 | snd lit1 < snd lit2 = LT
                      | snd lit1 > snd lit2 = GT
@@ -79,13 +75,21 @@ sortLiteral l = reverse (sortBy sortLitAlg expoAdded)
                 where expoAdded = addExpo l
 
 sortFactor :: Factor -> Factor -> Ordering
-sortFactor fac1 fac2 |  degree1 <= degree2 = LT
+sortFactor fac1 fac2 |  degree1 < degree2 = LT
                      |  degree1 > degree2 = GT
+                     | (degree1 == degree2) && (lit1 < lit2) = GT
+                     | (degree1 == degree2) && (lit1 > lit2) = LT
+                     | (degree1 == degree2) && (lit1 == lit2) && (length ((snd fac1)) > length ((snd fac2))) = GT
+                     | (degree1 == degree2) && (lit1 == lit2) && (length ((snd fac1)) <= length ((snd fac2))) = LT
+
                      where degree1 = snd ( head (snd fac1))
                            degree2 = snd ( head (snd fac2))
+                           lit1 = fst ( head (snd fac1))
+                           lit2 = fst ( head (snd fac2))
 
 sortPoli :: [Factor] -> [Factor]
 sortPoli l = reverse(sortBy sortFactor [(fst x, sortLiteral(snd x)) | x <- l, fst x /= 0])
+
 
 
 addFactor :: [Factor] -> [Factor]
@@ -94,9 +98,9 @@ addFactor [] = []
 
 
 normalize :: Poli -> Poli
-normalize polinom = addFactor l1
-                    where l1 = sortPoli polinom
-
+normalize polinom = [eliminate0Degree y | y<- l2]
+                    where l1 = sortPoli ([(fst z, [(' ', 0)]) | z <- polinom, (snd z) == []] ++ [z | z <- polinom, (snd z) /= []])
+                          l2 = addFactor l1
 
 normalizeString :: String -> String
 normalizeString spoli =  outputString (normalize (createPoly spoli))
