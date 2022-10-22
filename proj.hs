@@ -7,7 +7,6 @@ import System.IO
 import Data.String
 
 
-
 type Factor = (Int, [(Char,Int)])
 type Poli = [Factor]
 
@@ -190,7 +189,6 @@ createLiteral (x:xs:xss) | isLetter xs = [(x, 1)] ++ createLiteral ([xs] ++ xss)
                          | xs == '^' = [(x, read (takeWhile (isDigit) xss) :: Int)] ++ createLiteral (dropWhile (isDigit) xss)
 createLiteral (x:[]) = [(x, 1)]
 createLiteral [] = []
-
 
 -- ???
 takeCoef :: String -> Factor
