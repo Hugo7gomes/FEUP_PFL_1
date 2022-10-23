@@ -12,8 +12,10 @@ Deste modo, criamos uma função sortPoli que, através de funções auxiliares,
 
 ```haskell
 normalize :: Poli -> Poli
-normalize polinom = addFactor l1
-                    where l1 = sortPoli polinom
+normalize polinom = [eliminate0Degree y | y<- l3]
+                    where l1 = sortPoli ([(fst z, [(' ', 0)]) | z <- polinom, (snd z) == []] ++ [z | z <- polinom, (snd z) /= []])
+                          l2 = addFactor l1
+                          l3 = [ x | x <- l2, (fst x) /= 0]
 ```
 
 ### Exemplo
@@ -56,9 +58,10 @@ Deste modo, através de funções auxiliares, multiplicamos os coeficientes,redu
 derivatePoli :: Poli -> Char -> Poli
 derivatePoli pol1 var = normalize [eliminate0Degree x | x <- pol5]
                         where pol5 = [x | x <- pol4, eliminateTerms x var]
-                              pol4 = normalize [reduceDegree x var | x <- pol3]
+                              pol4 = [reduceDegree x var | x <- pol3]
                               pol3 = multiplicateCoef pol2 var
                               pol2 = normalize pol1
+
 
 ```
 
