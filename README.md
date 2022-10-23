@@ -13,7 +13,8 @@ Deste modo, criamos uma função sortPoli que, através de funções auxiliares,
 ```haskell
 normalize :: Poli -> Poli
 normalize polinom = [eliminate0Degree y | y<- l3]
-                    where l1 = sortPoli ([(fst z, [(' ', 0)]) | z <- polinom, (snd z) == []] ++ [z | z <- polinom, (snd z) /= []])
+                    where l1 = sortPoli ([(fst z, [(' ', 0)]) 
+                    | z <- polinom, (snd z) == []] ++ [z | z <- polinom, (snd z) /= []])
                           l2 = addFactor l1
                           l3 = [ x | x <- l2, (fst x) /= 0]
 ```
@@ -41,7 +42,8 @@ O processo de multiplicação de dois polinómios consiste em multiplicar todos 
 Deste modo, primeiramente, normalizamos ambos os polinómios, de seguida, através de dois geradores, em que cada um retira um fator de um polinómio, multiplicamos os coeficientes e concatenamos a lista de literais.Por fim, normalizamos o polinómio final.
 ```haskell
 multiplicatePolis :: Poli -> Poli -> Poli
-multiplicatePolis pol1 pol2 = normalize [((fst x) * (fst y), (snd x) ++ (snd y)) | x <- pol3, y <- pol4]
+multiplicatePolis pol1 pol2 = normalize [((fst x) * (fst y), (snd x) ++ (snd y)) 
+                                          | x <- pol3, y <- pol4]
                   where pol3 = normalize pol1
                         pol4 = normalize pol2
 ```
