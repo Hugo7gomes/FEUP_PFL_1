@@ -1,35 +1,86 @@
 import Proj
-import Test.QuickCheck
-
-
-
-prop_associativity_sum :: Poli -> Poli -> Bool
-prop_associativity_sum p1 p2 = addTwoPolis p1 p2 == addTwoPolis p2 p1
-
-prop_null_element_sum :: Poli -> Bool
-prop_null_element_sum p1 = addTwoPolis p1 [(0,[(' ', 0)])] == normalize p1
-
-prop_associativity_mult :: Poli -> Poli -> Bool
-prop_associativity_mult p1 p2 = multiplicatePolis p1 p2 == multiplicatePolis p2 p1
-{-
-prop_null_element_mult :: Poly -> Bool
-prop_null_element_mult p1 = mult p1 (1,[]) == p1
-
-prop_coef_deriv :: Poly -> Bool
-prop_coef_deriv p1 = deriv (mult p1 (5,[])) == mult (5,[]) (deriv p1)
-
-prop_null_elem_deriv :: Poly -> Bool
-prop_null_elem_deriv = deriv ( p1 :: [(5,[])]) ==  deriv p1
-
-prop_sum_deriv :: Poly -> Poly -> Bool
-prop_sum_deriv p1 p2 = deriv (sum p1 p2) == sum (deriv p1) (deriv p2)
-
--}
-
 
 main :: IO()
 main = do
-    putStrLn "\n####### Function Tests #######\n"
-    --quickCheck (withMaxSuccess 100 prop_associativity_sum)
-    --quickCheck (withMaxSuccess 100 prop_null_element_sum)
-    quickCheck (withMaxSuccess 30 prop_associativity_mult)  
+    putStrLn "\n####### Normalize a Polynomial #######\n"
+    putStrLn "Case 1: "
+    putStrLn "10z + 5xy^2"
+    putStrLn "Result: "
+    putStrLn (normalizeString "10z + 5xy^2")
+    putStrLn "\nCase 2: "
+    putStrLn "3"
+    putStrLn "Result: "
+    putStrLn (normalizeString "3")
+    putStrLn "\nCase 3: "
+    putStrLn "10z + 5xy^2+ 4z"
+    putStrLn "Result: "
+    putStrLn (normalizeString "10z + 5xy^2+ 4z")
+    putStrLn "\nCase 4: "
+    putStrLn ""
+    putStrLn "Result: "
+    putStrLn (normalizeString "")
+    putStrLn "\nCase 5: "
+    putStrLn "5x^2 -5x^2"
+    putStrLn "Result: "
+    putStrLn (normalizeString "5x^2 -5x^2")
+    putStrLn "\nCase 6: "
+    putStrLn "5x^2x + 3x^2"
+    putStrLn "Result: "
+    putStrLn (normalizeString "5x^2x + 3x^2")
+
+    putStrLn "\n####### Sum Two Polynomials #######\n"
+    putStrLn "Case 1: "
+    putStrLn "10z + 5xy^2"
+    putStrLn "0"
+    putStrLn "Result: "
+    putStrLn (addTwoPolisString "10z + 5xy^2" "0")
+    putStrLn "\nCase 2: "
+    putStrLn "10z + 5xy^2"
+    putStrLn "15z + 3x"
+    putStrLn "Result: "
+    putStrLn (addTwoPolisString "10z + 5xy^2" "15z + 3x")
+
+    putStrLn "\n####### Multiplicate Two Polynomials #######\n"
+    putStrLn "Case 1: "
+    putStrLn "10z + 5xy^2"
+    putStrLn "0"
+    putStrLn "Result: "
+    putStrLn (multiplicatePolisString "10z + 5xy^2" "0")
+    putStrLn "\nCase 2: "
+    putStrLn "10z + 5xy^2"
+    putStrLn "15z + 3x"
+    putStrLn "Result: "
+    putStrLn (multiplicatePolisString "10z + 5xy^2" "15z + 3x")
+    putStrLn "\nCase 3: "
+    putStrLn "10z + 5xy^2"
+    putStrLn "1"
+    putStrLn "Result: "
+    putStrLn (multiplicatePolisString "10z + 5xy^2" "1")
+
+
+    putStrLn "\n####### Derivate a Polynomial #######\n"
+    putStrLn "Case 1: "
+    putStrLn "10z + 5xy^2"
+    putStrLn "x"
+    putStrLn "Result: "
+    putStrLn (derivatePoliString "10z + 5xy^2" 'x')
+    putStrLn "\nCase 2: "
+    putStrLn "10x + 5xy^2"
+    putStrLn "z"
+    putStrLn "Result: "
+    putStrLn (derivatePoliString "10x + 5xy^2" 'z')
+    putStrLn "\nCase 3: "
+    putStrLn "10x^2 + 5xy^2"
+    putStrLn "x"
+    putStrLn "Result: "
+    putStrLn (derivatePoliString "10x^2 + 5xy^2" 'x')
+
+    putStrLn "\n####### String to Internal Representation #######\n"
+    putStrLn "Case 1: "
+    putStrLn "10z + 5xy^2"
+    putStrLn "Result: "
+    putStrLn $ show (createPoly "10z + 5xy^2")
+    putStrLn "\nCase 2: "
+    putStrLn "10"
+    putStrLn "Result: "
+    putStrLn $ show (createPoly "10")
