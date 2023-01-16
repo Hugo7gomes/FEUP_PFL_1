@@ -98,6 +98,12 @@ createString (x:xs) |(fst x) > 0 = "+" ++ show (fst x) ++ showLiteral (snd x) ++
 createString [] = ""
 
 ```
+## Grade
+
+| Grade      | 
+| ----------- |
+| 18,8      |
+
 
 ## Autores
 
